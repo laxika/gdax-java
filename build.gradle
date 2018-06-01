@@ -1,6 +1,11 @@
 apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
 
 group = 'irufus'
 description = 'Client for the GDAX API'
@@ -9,24 +14,15 @@ version = '0.9.0'
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "http://repo.maven.apache.org/maven2" }
-        maven { url "https://repo.spring.io/release" }
-
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.2.RELEASE"
     }
 }
 
 repositories {
-    maven { url "http://central.maven.org/maven2/"}
-    maven { url "http://repo1.maven.org/maven2/" }
-    maven { url "https://repo.spring.io/release/"}
-
+    mavenCentral()
 }
-
-project.archivesBaseName = 'gdax-java'
-project.applicationName = 'gdax-java'
 
 dependencies {
     compile 'junit:junit:4.12'
@@ -35,25 +31,14 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.8.6'
-    compile 'org.springframework.boot:spring-boot-starter-web:1.5.4.RELEASE'
-    compile 'org.springframework:spring-context:4.3.4.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'joda-time:joda-time:2.9.7'
 
-    testCompile 'org.springframework:spring-test:4.3.5.RELEASE'
-    testCompile 'org.springframework.boot:spring-boot-test:1.5.4.RELEASE'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    compileOnly group: 'org.projectlombok', name: 'lombok'
+    testCompileOnly group: 'org.projectlombok', name: 'lombok'
 }
 
 tasks.withType(Jar) {
     destinationDir = file("${rootDir}/build/")
-}
-
-// file will be generated here: build/gdax-java-1.0.jar
-jar {
-    doFirst {
-        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    }
-    manifest {
-        attributes 'Main-Class': 'com.coinbase.exchange.api.GdaxApiApplication'
-    }
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }

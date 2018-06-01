@@ -1,7 +1,7 @@
 package com.coinbase.exchange.api.exchange;
 
 import com.google.gson.Gson;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,14 +19,9 @@ import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
 
-
-/**
- * Created by irufus on 2/25/15.
- */
+@Slf4j
 @Component
 public class GdaxExchangeImpl implements GdaxExchange {
-
-    static Logger log = Logger.getLogger(GdaxExchangeImpl.class.getName());
 
     String publicKey;
     String passphrase;

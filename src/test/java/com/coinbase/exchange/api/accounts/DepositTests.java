@@ -5,7 +5,8 @@ import com.coinbase.exchange.api.deposits.DepositService;
 import com.coinbase.exchange.api.entity.PaymentResponse;
 import com.coinbase.exchange.api.payments.CoinbaseAccount;
 import com.coinbase.exchange.api.payments.PaymentService;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,8 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import static org.junit.Assert.assertTrue;
 
+@Slf4j
+@Ignore
 public class DepositTests extends BaseTest {
-    private final static Logger log = Logger.getLogger(DepositTests.class);
 
     @Autowired
     PaymentService paymentService;

@@ -3,6 +3,7 @@ package com.coinbase.exchange.api.accounts;
 import com.coinbase.exchange.api.BaseTest;
 import com.coinbase.exchange.api.useraccount.UserAccountData;
 import com.coinbase.exchange.api.useraccount.UserAccountService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class UserAccountServiceTests extends BaseTest {
 
     @Autowired

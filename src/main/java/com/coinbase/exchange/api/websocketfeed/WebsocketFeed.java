@@ -1,7 +1,6 @@
 package com.coinbase.exchange.api.websocketfeed;
 
 import com.coinbase.exchange.api.exchange.Signature;
-import com.coinbase.exchange.api.gui.orderbook.OrderBookView;
 import com.coinbase.exchange.api.websocketfeed.message.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -115,7 +114,7 @@ public class WebsocketFeed {
     }
 
 
-    public void subscribe(Subscribe msg, OrderBookView orderBook) {
+    public void subscribe(Subscribe msg) {
         String jsonSubscribeMessage = signObject(msg);
 
         addMessageHandler(json -> {
@@ -130,7 +129,6 @@ public class WebsocketFeed {
                     if (type.equals("heartbeat"))
                     {
                         log.info("heartbeat");
-                        orderBook.heartBeat(getObject(json, new TypeReference<HeartBeat>() {}));
                     }
                     else if (type.equals("received"))
                     {
@@ -142,21 +140,18 @@ public class WebsocketFeed {
                     else if (type.equals("open"))
                     {
                         log.info("Order opened: " + json );
-                        orderBook.updateOrderBook(getObject(json, new TypeReference<OrderOpenOrderBookMessage>() {}));
-                    }
+                        }
                     else if (type.equals("done"))
                     {
                         log.info("Order done: " + json);
                         if (!message.getReason().equals("filled")) {
                             OrderBookMessage doneOrder = getObject(json, new TypeReference<OrderDoneOrderBookMessage>() {});
-                            orderBook.updateOrderBook(doneOrder);
                         }
                     }
                     else if (type.equals("match"))
                     {
                         log.info("Order matched: " + json);
                         OrderBookMessage matchedOrder = getObject(json, new TypeReference<OrderMatchOrderBookMessage>(){});
-                        orderBook.updateOrderBook(matchedOrder);
                     }
                     else if (type.equals("change"))
                     {
