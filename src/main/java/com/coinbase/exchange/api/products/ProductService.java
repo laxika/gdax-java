@@ -2,25 +2,22 @@ package com.coinbase.exchange.api.products;
 
 import com.coinbase.exchange.api.entity.Product;
 import com.coinbase.exchange.api.exchange.GdaxExchange;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Created by robevansuk on 03/02/2017.
- */
-@Component
+@Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    @Autowired
-    GdaxExchange exchange;
+    private static final String PRODUCTS_ENDPOINT = "/products";
 
-    public static final String PRODUCTS_ENDPOINT = "/products";
+    private final GdaxExchange exchange;
 
-    // no paged products necessary
     public List<Product> getProducts() {
-        return exchange.getAsList(PRODUCTS_ENDPOINT, new ParameterizedTypeReference<Product[]>(){});
+        return exchange.getAsList(PRODUCTS_ENDPOINT, new ParameterizedTypeReference<Product[]>() {
+        });
     }
 }

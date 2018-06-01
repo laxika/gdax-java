@@ -6,7 +6,7 @@ import com.coinbase.exchange.api.accounts.AccountService;
 import com.coinbase.exchange.api.entity.Fill;
 import com.coinbase.exchange.api.entity.NewLimitOrderSingle;
 import com.coinbase.exchange.api.entity.NewMarketOrderSingle;
-import com.coinbase.exchange.api.marketdata.MarketData;
+import com.coinbase.exchange.api.marketdata.domain.MarketData;
 import com.coinbase.exchange.api.marketdata.MarketDataService;
 import com.coinbase.exchange.api.products.ProductService;
 import lombok.extern.slf4j.Slf4j;

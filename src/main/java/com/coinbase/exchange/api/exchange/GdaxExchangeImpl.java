@@ -48,12 +48,14 @@ public class GdaxExchangeImpl implements GdaxExchange {
     @Override
     public <T> T get(String resourcePath, ParameterizedTypeReference<T> responseType) {
         try {
-            ResponseEntity<T> responseEntity = restTemplate.exchange(getBaseUrl() + resourcePath,
+            final ResponseEntity<T> responseEntity = restTemplate.exchange(getBaseUrl() + resourcePath,
                     GET, securityHeaders(resourcePath, "GET", ""), responseType);
+
             return responseEntity.getBody();
         } catch (HttpClientErrorException ex) {
             log.error("GET request Failed for '" + resourcePath + "': " + ex.getResponseBodyAsString());
         }
+
         return null;
     }
 
