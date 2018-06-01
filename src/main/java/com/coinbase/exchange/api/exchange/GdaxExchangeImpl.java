@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -33,10 +34,10 @@ public class GdaxExchangeImpl implements GdaxExchange {
 
     @Autowired
     public GdaxExchangeImpl(@Value("${gdax.key}") String publicKey,
-                            @Value("${gdax.passphrase}") String passphrase,
-                            @Value("${gdax.api.baseUrl}") String baseUrl,
-                            Signature signature,
-                            RestTemplate restTemplate) {
+            @Value("${gdax.passphrase}") String passphrase,
+            @Value("${gdax.api.baseUrl}") String baseUrl,
+            Signature signature,
+            RestTemplate restTemplate) {
         this.publicKey = publicKey;
         this.passphrase = passphrase;
         this.baseUrl = baseUrl;
@@ -48,11 +49,7 @@ public class GdaxExchangeImpl implements GdaxExchange {
     public <T> T get(String resourcePath, ParameterizedTypeReference<T> responseType) {
         try {
             ResponseEntity<T> responseEntity = restTemplate.exchange(getBaseUrl() + resourcePath,
-                    GET,
-                    securityHeaders(resourcePath,
-                    "GET",
-                     ""),
-                    responseType);
+                    GET, securityHeaders(resourcePath, "GET", ""), responseType);
             return responseEntity.getBody();
         } catch (HttpClientErrorException ex) {
             log.error("GET request Failed for '" + resourcePath + "': " + ex.getResponseBodyAsString());
@@ -62,38 +59,38 @@ public class GdaxExchangeImpl implements GdaxExchange {
 
     @Override
     public <T> List<T> getAsList(String resourcePath, ParameterizedTypeReference<T[]> responseType) {
-       T[] result = get(resourcePath, responseType);
+        T[] result = get(resourcePath, responseType);
 
-       return result == null ? Arrays.asList() : Arrays.asList(result);
+        return result == null ? Collections.emptyList() : Arrays.asList(result);
     }
 
     @Override
     public <T> T pagedGet(String resourcePath,
-                          ParameterizedTypeReference<T> responseType,
-                          String beforeOrAfter,
-                          Integer pageNumber,
-                          Integer limit) {
+            ParameterizedTypeReference<T> responseType,
+            String beforeOrAfter,
+            Integer pageNumber,
+            Integer limit) {
         resourcePath += "?" + beforeOrAfter + "=" + pageNumber + "&limit=" + limit;
         return get(resourcePath, responseType);
     }
 
     @Override
     public <T> List<T> pagedGetAsList(String resourcePath,
-                          ParameterizedTypeReference<T[]> responseType,
-                          String beforeOrAfter,
-                          Integer pageNumber,
-                          Integer limit) {
-        T[] result = pagedGet(resourcePath, responseType, beforeOrAfter, pageNumber, limit );
-        return result == null ? Arrays.asList() : Arrays.asList(result);
+            ParameterizedTypeReference<T[]> responseType,
+            String beforeOrAfter,
+            Integer pageNumber,
+            Integer limit) {
+        T[] result = pagedGet(resourcePath, responseType, beforeOrAfter, pageNumber, limit);
+        return result == null ? Collections.emptyList() : Arrays.asList(result);
     }
 
     @Override
     public <T> T delete(String resourcePath, ParameterizedTypeReference<T> responseType) {
         try {
             ResponseEntity<T> response = restTemplate.exchange(getBaseUrl() + resourcePath,
-                HttpMethod.DELETE,
-                securityHeaders(resourcePath, "DELETE", ""),
-                responseType);
+                    HttpMethod.DELETE,
+                    securityHeaders(resourcePath, "DELETE", ""),
+                    responseType);
             return response.getBody();
         } catch (HttpClientErrorException ex) {
             log.error("DELETE request Failed for '" + resourcePath + "': " + ex.getResponseBodyAsString());
@@ -102,7 +99,7 @@ public class GdaxExchangeImpl implements GdaxExchange {
     }
 
     @Override
-    public <T, R> T post(String resourcePath,  ParameterizedTypeReference<T> responseType, R jsonObj) {
+    public <T, R> T post(String resourcePath, ParameterizedTypeReference<T> responseType, R jsonObj) {
         Gson gson = new Gson();
         String jsonBody = gson.toJson(jsonObj);
 
@@ -143,14 +140,14 @@ public class GdaxExchangeImpl implements GdaxExchange {
     }
 
     private void curlRequest(String method, String jsonBody, HttpHeaders headers, String resource) {
-        String curlTest = "curl ";
-        for (String key : headers.keySet()){
-            curlTest +=  "-H '" + key + ":" + headers.get(key).get(0) + "' ";
+        StringBuilder curlTest = new StringBuilder("curl ");
+        for (String key : headers.keySet()) {
+            curlTest.append("-H '").append(key).append(":").append(headers.get(key).get(0)).append("' ");
         }
         if (!jsonBody.equals(""))
-            curlTest += "-d '" + jsonBody + "' ";
+            curlTest.append("-d '").append(jsonBody).append("' ");
 
-        curlTest += "-X " + method + " " + getBaseUrl() + resource;
-        log.debug(curlTest);
+        curlTest.append("-X ").append(method).append(" ").append(getBaseUrl()).append(resource);
+        log.debug(curlTest.toString());
     }
 }

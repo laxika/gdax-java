@@ -1,12 +1,7 @@
 package com.coinbase.exchange.api.accounts;
 
-import com.coinbase.exchange.api.entity.Hold;
-
 import java.math.BigDecimal;
 
-/**
- * Created by irufus on 2/18/15.
- */
 public class Account {
     private String id;
     private String currency;
