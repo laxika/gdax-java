@@ -1,9 +1,10 @@
 package com.coinbase.exchange.api.orders;
 
-/**
- * Created by robevansuk on 03/02/2017.
- */
+import lombok.ToString;
+
+@ToString
 public class Order {
+
     String id;
     String size;
     String price;
@@ -19,7 +20,8 @@ public class Order {
     String executed_value;
     String status;
 
-    public Order() {}
+    public Order() {
+    }
 
     public Order(String id, String price, String size, String product_id, String side, String stp, String type, String time_in_force, String post_only, String created_at, String fill_fees, String filled_size, String executed_value, String status, Boolean settled) {
         this.id = id;
@@ -173,13 +175,4 @@ public class Order {
     public void setSettled(Boolean settled) {
         this.settled = settled;
     }
-
-    public String toString() {
-        String orderString = getSide();
-        orderString += ": " + getProduct_id();
-        orderString += ": " + getPrice();
-        orderString += ": " + getSize();
-        return orderString;
-    }
-
 }

@@ -1,49 +1,55 @@
 package com.coinbase.exchange.api.accounts;
 
 import com.coinbase.exchange.api.BaseTest;
+import com.coinbase.exchange.api.accounts.domain.Account;
+import com.coinbase.exchange.api.accounts.domain.AccountHistory;
 import com.coinbase.exchange.api.entity.Hold;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-@Ignore
+//@Ignore
 public class AccountsTest extends BaseTest {
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @Test
     public void canGetAccounts() {
-        List<Account> accounts  = accountService.getAccounts();
-        assertTrue(accounts != null);
+        final List<Account> accounts = accountService.getAccounts();
+
+        assertNotNull(accounts);
     }
 
     @Test
     public void getAccount() {
-        List<Account> accounts  = accountService.getAccounts();
-        Account account = accountService.getAccount(accounts.get(0).getId());
-        assertTrue(account != null);
+        final List<Account> accounts = accountService.getAccounts();
+        final Account account = accountService.getAccount(accounts.get(0).getId());
+
+        assertNotNull(account);
     }
 
     @Test
     public void canGetAccountHistory() {
-        List<Account> accounts = accountService.getAccounts();
-        List<AccountHistory> history = accountService.getAccountHistory(accounts.get(0).getId());
-        assertTrue(history != null); // anything but null/error.
+        final List<Account> accounts = accountService.getAccounts();
+        final List<AccountHistory> history = accountService.getAccountHistory(accounts.get(0).getId());
+
+        assertNotNull(history);
     }
 
     @Test
     public void canGetAccountHolds() {
         List<Account> accounts = accountService.getAccounts();
         List<Hold> holds = accountService.getHolds(accounts.get(0).getId());
-        assertTrue(holds != null);
+        assertNotNull(holds);
+
         // only check the holds if they exist
-        if (holds.size()>0) {
+        if (holds.size() > 0) {
             assertTrue(holds.get(0).getAmount().floatValue() >= 0.0f);
         }
     }
@@ -61,7 +67,7 @@ public class AccountsTest extends BaseTest {
         int limit = 5;
         List<AccountHistory> firstPageAccountHistory = accountService.getPagedAccountHistory(accounts.get(0).getId(),
                 beforeOrAfter, pageNumber, limit);
-        assertTrue(firstPageAccountHistory != null);
+        assertNotNull(firstPageAccountHistory);
         assertTrue(firstPageAccountHistory.size() <= limit);
     }
 
@@ -69,7 +75,7 @@ public class AccountsTest extends BaseTest {
     public void canGetPagedHolds() {
         List<Account> accounts = accountService.getAccounts();
 
-        assertTrue(accounts!=null);
+        assertNotNull(accounts);
         assertTrue(accounts.size() > 0);
 
         String beforeOrAfter = "after";
@@ -81,7 +87,7 @@ public class AccountsTest extends BaseTest {
                 pageNumber,
                 limit);
 
-        assertTrue(firstPageOfHolds != null);
+        assertNotNull(firstPageOfHolds);
         assertTrue(firstPageOfHolds.size() <= limit);
     }
 }

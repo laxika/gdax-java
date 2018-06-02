@@ -54,14 +54,14 @@ public class GdaxExchangeImpl implements GdaxExchange {
             return responseEntity.getBody();
         } catch (HttpClientErrorException ex) {
             log.error("GET request Failed for '" + resourcePath + "': " + ex.getResponseBodyAsString());
-        }
 
-        return null;
+            throw new RuntimeException("Failed get request for '" + resourcePath + "'!", ex);
+        }
     }
 
     @Override
     public <T> List<T> getAsList(String resourcePath, ParameterizedTypeReference<T[]> responseType) {
-        T[] result = get(resourcePath, responseType);
+        final T[] result = get(resourcePath, responseType);
 
         return result == null ? Collections.emptyList() : Arrays.asList(result);
     }
@@ -77,11 +77,8 @@ public class GdaxExchangeImpl implements GdaxExchange {
     }
 
     @Override
-    public <T> List<T> pagedGetAsList(String resourcePath,
-            ParameterizedTypeReference<T[]> responseType,
-            String beforeOrAfter,
-            Integer pageNumber,
-            Integer limit) {
+    public <T> List<T> pagedGetAsList(String resourcePath, ParameterizedTypeReference<T[]> responseType,
+            String beforeOrAfter, Integer pageNumber, Integer limit) {
         T[] result = pagedGet(resourcePath, responseType, beforeOrAfter, pageNumber, limit);
         return result == null ? Collections.emptyList() : Arrays.asList(result);
     }
@@ -124,10 +121,10 @@ public class GdaxExchangeImpl implements GdaxExchange {
 
     @Override
     public HttpEntity<String> securityHeaders(String endpoint, String method, String jsonBody) {
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
 
-        String timestamp = Instant.now().getEpochSecond() + "";
-        String resource = endpoint.replace(getBaseUrl(), "");
+        final String timestamp = String.valueOf(Instant.now().getEpochSecond());
+        final String resource = endpoint.replace(getBaseUrl(), "");
 
         headers.add("accept", "application/json");
         headers.add("content-type", "application/json");

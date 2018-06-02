@@ -1,6 +1,7 @@
 package com.coinbase.exchange.api.accounts;
 
 import com.coinbase.exchange.api.BaseTest;
+import com.coinbase.exchange.api.accounts.domain.Account;
 import com.coinbase.exchange.api.deposits.DepositService;
 import com.coinbase.exchange.api.entity.PaymentResponse;
 import com.coinbase.exchange.api.payments.CoinbaseAccount;
