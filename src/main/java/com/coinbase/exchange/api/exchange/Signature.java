@@ -36,7 +36,9 @@ public class Signature {
      * the base64-decoded secret key on the prehash string for:
      * timestamp + method + requestPath + body (where + represents string concatenation)
      * and base64-encode the output.
+     * <p>
      * The timestamp value is the same as the CB-ACCESS-TIMESTAMP header.
+     *
      * @param requestPath
      * @param method
      * @param body
@@ -55,9 +57,5 @@ public class Signature {
             e.printStackTrace();
             throw new RuntimeErrorException(new Error("Cannot set up authentication headers."));
         }
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
     }
 }

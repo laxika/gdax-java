@@ -9,7 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,19 +21,18 @@ import java.util.List;
 import static org.springframework.http.HttpMethod.GET;
 
 @Slf4j
-@Component
-public class GdaxExchangeImpl implements GdaxExchange {
+@Service
+public class GdaxHttpClientImpl implements GdaxHttpClient {
 
-    String publicKey;
-    String passphrase;
-    String baseUrl;
+    private final String publicKey;
+    private final String passphrase;
+    private final String baseUrl;
 
-    Signature signature;
-
-    RestTemplate restTemplate;
+    private final Signature signature;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    public GdaxExchangeImpl(@Value("${gdax.key}") String publicKey,
+    public GdaxHttpClientImpl(@Value("${gdax.key}") String publicKey,
             @Value("${gdax.passphrase}") String passphrase,
             @Value("${gdax.api.baseUrl}") String baseUrl,
             Signature signature,

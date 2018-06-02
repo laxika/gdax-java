@@ -13,7 +13,7 @@ import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by irufus (sakamura@gmail.com)
- * @description The primary function of this class is to run through basic tests for the Authentication and GdaxExchange classes
+ * @description The primary function of this class is to run through basic tests for the Authentication and GdaxHttpClient classes
  */
 @Ignore
 public class AuthenticationTests extends BaseTest {

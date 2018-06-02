@@ -1,7 +1,7 @@
 package com.coinbase.exchange.api;
 
 import com.coinbase.exchange.api.configuration.ApiConfiguration;
-import com.coinbase.exchange.api.exchange.GdaxExchange;
+import com.coinbase.exchange.api.exchange.GdaxHttpClient;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,5 +14,5 @@ import org.springframework.test.context.junit4.SpringRunner;
 public abstract class BaseTest {
 
     @Autowired
-    public GdaxExchange exchange;
+    public GdaxHttpClient exchange;
 }

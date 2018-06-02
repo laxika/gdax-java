@@ -5,7 +5,7 @@ import org.springframework.http.HttpEntity;
 
 import java.util.List;
 
-public interface GdaxExchange {
+public interface GdaxHttpClient {
 
     String getBaseUrl();
 

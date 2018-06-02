@@ -3,15 +3,13 @@ package com.coinbase.exchange.api.orders;
 import com.coinbase.exchange.api.entity.Fill;
 import com.coinbase.exchange.api.entity.Hold;
 import com.coinbase.exchange.api.entity.NewOrderSingle;
-import com.coinbase.exchange.api.exchange.GdaxExchange;
+import com.coinbase.exchange.api.exchange.GdaxHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by robevansuk on 03/02/2017.
@@ -20,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 public class OrderService {
 
     @Autowired
-    GdaxExchange exchange;
+    GdaxHttpClient exchange;
 
     public static final String ORDERS_ENDPOINT = "/orders";
 

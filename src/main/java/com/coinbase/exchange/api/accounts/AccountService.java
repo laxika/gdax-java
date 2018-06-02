@@ -3,7 +3,7 @@ package com.coinbase.exchange.api.accounts;
 import com.coinbase.exchange.api.accounts.domain.Account;
 import com.coinbase.exchange.api.accounts.domain.AccountHistory;
 import com.coinbase.exchange.api.entity.Hold;
-import com.coinbase.exchange.api.exchange.GdaxExchange;
+import com.coinbase.exchange.api.exchange.GdaxHttpClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class AccountService {
 
     private static final String ACCOUNTS_ENDPOINT = "/accounts";
 
-    private final GdaxExchange exchange;
+    private final GdaxHttpClient exchange;
 
     public List<Account> getAccounts() {
         return exchange.getAsList(ACCOUNTS_ENDPOINT, new ParameterizedTypeReference<Account[]>() {

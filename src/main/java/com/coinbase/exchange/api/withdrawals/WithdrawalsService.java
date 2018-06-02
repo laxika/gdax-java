@@ -1,7 +1,7 @@
 package com.coinbase.exchange.api.withdrawals;
 
 import com.coinbase.exchange.api.entity.*;
-import com.coinbase.exchange.api.exchange.GdaxExchange;
+import com.coinbase.exchange.api.exchange.GdaxHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class WithdrawalsService {
 
 
     @Autowired
-    GdaxExchange gdaxExchange;
+    GdaxHttpClient gdaxHttpClient;
 
     public PaymentResponse makeWithdrawalToPaymentMethod(BigDecimal amount, String currency, String paymentMethodId) {
         PaymentRequest request = new PaymentRequest(amount, currency, paymentMethodId);
@@ -42,7 +42,7 @@ public class WithdrawalsService {
 
 
     private PaymentResponse makeWithdrawal(MonetaryRequest request, String withdrawalType) {
-        return gdaxExchange.post(WITHDRAWALS_ENDPOINT+ withdrawalType,
+        return gdaxHttpClient.post(WITHDRAWALS_ENDPOINT+ withdrawalType,
                 new ParameterizedTypeReference<PaymentResponse>() {},
                 request);
     }

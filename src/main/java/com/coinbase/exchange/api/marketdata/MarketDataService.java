@@ -1,6 +1,6 @@
 package com.coinbase.exchange.api.marketdata;
 
-import com.coinbase.exchange.api.exchange.GdaxExchange;
+import com.coinbase.exchange.api.exchange.GdaxHttpClient;
 import com.coinbase.exchange.api.marketdata.domain.MarketData;
 import com.coinbase.exchange.api.marketdata.domain.Trade;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class MarketDataService {
 
     private static final String PRODUCT_ENDPOINT = "/products";
 
-    private final GdaxExchange exchange;
+    private final GdaxHttpClient exchange;
 
     public MarketData getMarketDataOrderBook(final String productId, final String level) {
         String marketDataEndpoint = PRODUCT_ENDPOINT + "/" + productId + "/book";
