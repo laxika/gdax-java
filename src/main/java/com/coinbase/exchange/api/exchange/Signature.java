@@ -1,6 +1,5 @@
 package com.coinbase.exchange.api.exchange;
 
-import com.coinbase.exchange.api.constants.GdaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,17 +8,23 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.management.RuntimeErrorException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-/**
- * Created by robevansuk on 17/03/2017.
- */
 @Component
 public class Signature {
 
-    private String secretKey;
+    public static Mac SHARED_MAC;
 
-    public Signature() { }
+    static {
+        try {
+            SHARED_MAC = Mac.getInstance("HmacSHA256");
+        } catch (NoSuchAlgorithmException nsaEx) {
+            nsaEx.printStackTrace();
+        }
+    }
+
+    private String secretKey;
 
     @Autowired
     public Signature(@Value("${gdax.secret}") String secretKey) {
@@ -42,8 +47,8 @@ public class Signature {
         try {
             String prehash = timestamp + method.toUpperCase() + requestPath + body;
             byte[] secretDecoded = Base64.getDecoder().decode(secretKey);
-            SecretKeySpec keyspec = new SecretKeySpec(secretDecoded, GdaxConstants.SHARED_MAC.getAlgorithm());
-            Mac sha256 = (Mac) GdaxConstants.SHARED_MAC.clone();
+            SecretKeySpec keyspec = new SecretKeySpec(secretDecoded, SHARED_MAC.getAlgorithm());
+            Mac sha256 = (Mac) SHARED_MAC.clone();
             sha256.init(keyspec);
             return Base64.getEncoder().encodeToString(sha256.doFinal(prehash.getBytes()));
         } catch (CloneNotSupportedException | InvalidKeyException e) {
