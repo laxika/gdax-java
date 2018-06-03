@@ -2,17 +2,19 @@ package com.coinbase.exchange.api.marketdata.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
+@ToString
 public class OrderItem implements Comparable {
 
+    private final String orderId;
     private final BigDecimal price;
     private final BigDecimal size;
-    private final String orderId;
     private final BigDecimal num;
 
     @JsonCreator
@@ -34,7 +36,7 @@ public class OrderItem implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(final Object o) {
         return this.getPrice().compareTo(((OrderItem) o).getPrice()) * -1;
     }
 
