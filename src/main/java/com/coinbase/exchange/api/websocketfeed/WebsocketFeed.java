@@ -1,65 +1,34 @@
 package com.coinbase.exchange.api.websocketfeed;
 
+import com.coinbase.exchange.api.configuration.ApiProperties;
 import com.coinbase.exchange.api.exchange.Signature;
-import com.coinbase.exchange.api.websocketfeed.message.*;
+import com.coinbase.exchange.api.websocketfeed.message.OrderBookMessage;
+import com.coinbase.exchange.api.websocketfeed.message.OrderDoneOrderBookMessage;
+import com.coinbase.exchange.api.websocketfeed.message.OrderMatchOrderBookMessage;
+import com.coinbase.exchange.api.websocketfeed.message.Subscribe;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.websocket.*;
 import java.io.IOException;
-import java.net.URI;
 import java.time.Instant;
 
-/**
- * Websocketfeed adapted from someone else's code
- * <p>
- * >Jiji Sasidharan
- */
+@Slf4j
 @Component
 @ClientEndpoint
+@RequiredArgsConstructor
 public class WebsocketFeed {
 
-    static Logger log = LoggerFactory.getLogger(WebsocketFeed.class);
-
-    Signature signature;
+    private final ApiProperties apiProperties;
+    private final Signature signature;
 
     Session userSession = null;
     MessageHandler messageHandler;
-
-    String websocketUrl;
-    String passphrase;
-    String key;
-    boolean guiEnabled;
-
-    @Autowired
-    public WebsocketFeed(@Value("${websocket.baseUrl}") String websocketUrl,
-                         @Value("${gdax.key}") String key,
-                         @Value("${gdax.passphrase}") String passphrase,
-                         @Value("${gui.enabled}") boolean guiEnabled,
-                         Signature signature) {
-        this.key = key;
-        this.passphrase = passphrase;
-        this.websocketUrl = websocketUrl;
-        this.signature = signature;
-        this.guiEnabled = guiEnabled;
-
-        if (guiEnabled) {
-            try {
-                WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-                container.connectToServer(this, new URI(websocketUrl));
-            } catch (Exception e) {
-                System.out.println("Could not connect to remote server: " + e.getMessage() + ", " + e.getLocalizedMessage());
-                e.printStackTrace();
-            }
-        }
-    }
 
     /**
      * Callback hook for Connection open events.
@@ -187,9 +156,9 @@ public class WebsocketFeed {
         String jsonString = gson.toJson(jsonObj);
 
         String timestamp = Instant.now().getEpochSecond() + "";
-        jsonObj.setKey(key);
+        jsonObj.setKey(apiProperties.getAccessKey());
         jsonObj.setTimestamp(timestamp);
-        jsonObj.setPassphrase(passphrase);
+        jsonObj.setPassphrase(apiProperties.getPassphrase());
         jsonObj.setSignature(signature.generate("", "GET", jsonString, timestamp));
 
         return gson.toJson(jsonObj);
@@ -211,6 +180,6 @@ public class WebsocketFeed {
      * @author Jiji_Sasidharan
      */
     public interface MessageHandler {
-        public void handleMessage(String message);
+        void handleMessage(String message);
     }
 }

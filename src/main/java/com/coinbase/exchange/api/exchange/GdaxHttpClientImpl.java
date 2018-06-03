@@ -1,9 +1,9 @@
 package com.coinbase.exchange.api.exchange;
 
+import com.coinbase.exchange.api.configuration.ApiProperties;
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,27 +22,12 @@ import static org.springframework.http.HttpMethod.GET;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GdaxHttpClientImpl implements GdaxHttpClient {
 
-    private final String publicKey;
-    private final String passphrase;
-    private final String baseUrl;
-
+    private final ApiProperties apiProperties;
     private final Signature signature;
     private final RestTemplate restTemplate;
-
-    @Autowired
-    public GdaxHttpClientImpl(@Value("${gdax.key}") String publicKey,
-            @Value("${gdax.passphrase}") String passphrase,
-            @Value("${gdax.api.baseUrl}") String baseUrl,
-            Signature signature,
-            RestTemplate restTemplate) {
-        this.publicKey = publicKey;
-        this.passphrase = passphrase;
-        this.baseUrl = baseUrl;
-        this.signature = signature;
-        this.restTemplate = restTemplate;
-    }
 
     @Override
     public <T> T get(String resourcePath, ParameterizedTypeReference<T> responseType) {
@@ -115,7 +100,7 @@ public class GdaxHttpClientImpl implements GdaxHttpClient {
 
     @Override
     public String getBaseUrl() {
-        return baseUrl;
+        return apiProperties.getWebEndpoint();
     }
 
     @Override
@@ -127,10 +112,10 @@ public class GdaxHttpClientImpl implements GdaxHttpClient {
 
         headers.add("accept", "application/json");
         headers.add("content-type", "application/json");
-        headers.add("CB-ACCESS-KEY", publicKey);
+        headers.add("CB-ACCESS-KEY", apiProperties.getAccessKey());
         headers.add("CB-ACCESS-SIGN", signature.generate(resource, method, jsonBody, timestamp));
         headers.add("CB-ACCESS-TIMESTAMP", timestamp);
-        headers.add("CB-ACCESS-PASSPHRASE", passphrase);
+        headers.add("CB-ACCESS-PASSPHRASE", apiProperties.getPassphrase());
 
         curlRequest(method, jsonBody, headers, resource);
 

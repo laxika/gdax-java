@@ -1,15 +1,8 @@
-# gdax-java
+# Spring Boot Starter Coinbase Pro
 
-[![Join the chat at https://gitter.im/irufus/gdax-java](https://badges.gitter.im/irufus/gdax-java.svg)](https://gitter.im/irufus/gdax-java?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Sprinb Boot starter for the [GDAX API](https://docs.gdax.com/#introduction) that follows the development style similar to [coinbase-java](https://github.com/coinbase/coinbase-java)
 
-Java based wrapper for the [GDAX API](https://docs.gdax.com/#introduction) that follows the development style similar to [coinbase-java](https://github.com/coinbase/coinbase-java)
-
-# In Development
-
-Documenting usages, documenting examples, writing guidelines on how to contribute, and writing unit tests.
-
-# Usage
---------
+# Installation
 
 To build and run the application you can use the gradle script - this requires no installation as the "gradle wrapper" is included as part of the source code. All you need to do is:
 
