@@ -4,56 +4,65 @@ import com.coinbase.exchange.api.entity.Fill;
 import com.coinbase.exchange.api.entity.Hold;
 import com.coinbase.exchange.api.entity.NewOrderSingle;
 import com.coinbase.exchange.api.exchange.GdaxHttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by robevansuk on 03/02/2017.
- */
-@Component
+@Service
+@RequiredArgsConstructor
 public class OrderService {
 
-    @Autowired
-    GdaxHttpClient exchange;
+    private static final String ORDERS_ENDPOINT = "/orders";
 
-    public static final String ORDERS_ENDPOINT = "/orders";
+    private final GdaxHttpClient httpClient;
 
-    public List<Hold> getHolds(String accountId) {
-        return exchange.getAsList(ORDERS_ENDPOINT + "/" + accountId + "/holds", new ParameterizedTypeReference<Hold[]>(){});
+    public List<Hold> getHolds(final String accountId) {
+        return httpClient.getAsList(ORDERS_ENDPOINT + "/" + accountId + "/holds",
+                new ParameterizedTypeReference<Hold[]>() {
+                });
     }
 
-    public List<Order> getOpenOrders(String accountId) {
-        return exchange.getAsList(ORDERS_ENDPOINT + "/" + accountId + "/orders", new ParameterizedTypeReference<Order[]>(){});
+    public List<Order> getOpenOrders(final String accountId) {
+        return httpClient.getAsList(ORDERS_ENDPOINT + "/" + accountId + "/orders",
+                new ParameterizedTypeReference<Order[]>() {
+                });
     }
 
-    public Order getOrder(String orderId) {
-        return exchange.get(ORDERS_ENDPOINT + "/" + orderId,new ParameterizedTypeReference<Order>(){});
+    public Order getOrder(final String orderId) {
+        return httpClient.get(ORDERS_ENDPOINT + "/" + orderId, new ParameterizedTypeReference<Order>() {
+        });
     }
 
-    public Order createOrder(NewOrderSingle order) {
-        return exchange.post(ORDERS_ENDPOINT, new ParameterizedTypeReference<Order>(){}, order);
+    public Order createOrder(final NewOrderSingle order) {
+        return httpClient.post(ORDERS_ENDPOINT, new ParameterizedTypeReference<Order>() {
+        }, order);
     }
 
-    public String cancelOrder(String orderId) {
-        String deleteEndpoint = ORDERS_ENDPOINT + "/" + orderId;
-        return exchange.delete(deleteEndpoint, new ParameterizedTypeReference<String>(){});
+    public String cancelOrder(final String orderId) {
+        final String deleteEndpoint = ORDERS_ENDPOINT + "/" + orderId;
+
+        return httpClient.delete(deleteEndpoint, new ParameterizedTypeReference<String>() {
+        });
     }
 
     public List<Order> getOpenOrders() {
-        return exchange.getAsList(ORDERS_ENDPOINT, new ParameterizedTypeReference<Order[]>(){});
+        return httpClient.getAsList(ORDERS_ENDPOINT, new ParameterizedTypeReference<Order[]>() {
+        });
     }
 
     public List<Order> cancelAllOpenOrders() {
-        return Arrays.asList(exchange.delete(ORDERS_ENDPOINT, new ParameterizedTypeReference<Order[]>(){}));
+        return Arrays.asList(httpClient.delete(ORDERS_ENDPOINT, new ParameterizedTypeReference<Order[]>() {
+        }));
     }
 
     public List<Fill> getAllFills() {
-        String fillsEndpoint = "/fills";
-        return exchange.getAsList(fillsEndpoint, new ParameterizedTypeReference<Fill[]>(){});
+        final String fillsEndpoint = "/fills";
+
+        return httpClient.getAsList(fillsEndpoint, new ParameterizedTypeReference<Fill[]>() {
+        });
     }
 }
 
