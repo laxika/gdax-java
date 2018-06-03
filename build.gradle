@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 apply plugin: 'io.spring.dependency-management'
 
 dependencyManagement {
@@ -7,9 +8,8 @@ dependencyManagement {
     }
 }
 
-group = 'irufus'
-description = 'Client for the GDAX API'
-version = '0.9.0'
+group = 'com.morethanheroic'
+version = '1.0.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -32,8 +32,4 @@ dependencies {
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     compileOnly group: 'org.projectlombok', name: 'lombok'
     testCompileOnly group: 'org.projectlombok', name: 'lombok'
-}
-
-tasks.withType(Jar) {
-    destinationDir = file("${rootDir}/build/")
 }
