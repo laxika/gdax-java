@@ -6,9 +6,9 @@ import com.coinbase.exchange.api.websocketfeed.message.OrderBookMessage;
 import com.coinbase.exchange.api.websocketfeed.message.OrderDoneOrderBookMessage;
 import com.coinbase.exchange.api.websocketfeed.message.OrderMatchOrderBookMessage;
 import com.coinbase.exchange.api.websocketfeed.message.Subscribe;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,6 +26,7 @@ public class WebsocketFeed {
 
     private final ApiProperties apiProperties;
     private final Signature signature;
+    private final ObjectMapper objectMapper;
 
     Session userSession = null;
     MessageHandler messageHandler;
@@ -91,45 +92,35 @@ public class WebsocketFeed {
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
                 public Void doInBackground() {
-                    OrderBookMessage message = getObject(json, new TypeReference<OrderBookMessage>() {});
+                    OrderBookMessage message = getObject(json, new TypeReference<OrderBookMessage>() {
+                    });
 
                     String type = message.getType();
 
-                    if (type.equals("heartbeat"))
-                    {
+                    if (type.equals("heartbeat")) {
                         log.info("heartbeat");
-                    }
-                    else if (type.equals("received"))
-                    {
+                    } else if (type.equals("received")) {
                         // received orders are not necessarily live orders - so I'm ignoring these msgs as they're
                         // subject to change.
                         log.info("order received {}", json);
 
-                    }
-                    else if (type.equals("open"))
-                    {
-                        log.info("Order opened: " + json );
-                        }
-                    else if (type.equals("done"))
-                    {
+                    } else if (type.equals("open")) {
+                        log.info("Order opened: " + json);
+                    } else if (type.equals("done")) {
                         log.info("Order done: " + json);
                         if (!message.getReason().equals("filled")) {
-                            OrderBookMessage doneOrder = getObject(json, new TypeReference<OrderDoneOrderBookMessage>() {});
+                            OrderBookMessage doneOrder = getObject(json, new TypeReference<OrderDoneOrderBookMessage>() {
+                            });
                         }
-                    }
-                    else if (type.equals("match"))
-                    {
+                    } else if (type.equals("match")) {
                         log.info("Order matched: " + json);
-                        OrderBookMessage matchedOrder = getObject(json, new TypeReference<OrderMatchOrderBookMessage>(){});
-                    }
-                    else if (type.equals("change"))
-                    {
+                        OrderBookMessage matchedOrder = getObject(json, new TypeReference<OrderMatchOrderBookMessage>() {
+                        });
+                    } else if (type.equals("change")) {
                         // TODO - possibly need to provide implementation for this to work in real time.
-                         log.info("Order Changed {}", json);
+                        log.info("Order Changed {}", json);
                         // orderBook.updateOrderBookWithChange(getObject(json, new TypeReference<OrderChangeOrderBookMessage>(){}));
-                    }
-                    else
-                    {
+                    } else {
                         // Not sure this is required unless I'm attempting to place orders
                         // ERROR
                         log.error("Error {}", json);
@@ -152,8 +143,12 @@ public class WebsocketFeed {
 
     // TODO - get this into postHandle interceptor.
     public String signObject(Subscribe jsonObj) {
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(jsonObj);
+        String jsonString;
+        try {
+            jsonString = objectMapper.writeValueAsString(jsonObj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         String timestamp = Instant.now().getEpochSecond() + "";
         jsonObj.setKey(apiProperties.getAccessKey());
@@ -161,7 +156,11 @@ public class WebsocketFeed {
         jsonObj.setPassphrase(apiProperties.getPassphrase());
         jsonObj.setSignature(signature.generate("", "GET", jsonString, timestamp));
 
-        return gson.toJson(jsonObj);
+        try {
+            return objectMapper.writeValueAsString(jsonObj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public <T> T getObject(String json, TypeReference<T> type) {

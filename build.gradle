@@ -21,11 +21,10 @@ buildscript {
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral()and more
 }
 
 dependencies {
-    compile 'com.google.code.gson:gson:2.8.0'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'joda-time:joda-time:2.9.7'
 

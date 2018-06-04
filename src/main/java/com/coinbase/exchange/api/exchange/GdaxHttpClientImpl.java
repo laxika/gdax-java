@@ -1,7 +1,8 @@
 package com.coinbase.exchange.api.exchange;
 
 import com.coinbase.exchange.api.configuration.ApiProperties;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,6 +29,7 @@ public class GdaxHttpClientImpl implements GdaxHttpClient {
     private final ApiProperties apiProperties;
     private final Signature signature;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     @Override
     public <T> T get(String resourcePath, ParameterizedTypeReference<T> responseType) {
@@ -83,8 +85,12 @@ public class GdaxHttpClientImpl implements GdaxHttpClient {
 
     @Override
     public <T, R> T post(String resourcePath, ParameterizedTypeReference<T> responseType, R jsonObj) {
-        Gson gson = new Gson();
-        String jsonBody = gson.toJson(jsonObj);
+        String jsonBody;
+        try {
+            jsonBody = objectMapper.writeValueAsString(jsonObj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             ResponseEntity<T> response = restTemplate.exchange(getBaseUrl() + resourcePath,

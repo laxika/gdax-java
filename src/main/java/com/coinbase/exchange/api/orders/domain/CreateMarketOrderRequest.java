@@ -1,14 +1,12 @@
-package com.coinbase.exchange.api.entity;
+package com.coinbase.exchange.api.orders.domain;
 
 import java.math.BigDecimal;
 
-/**
- * Created by irufus on 7/31/15.
- */
-public class NewMarketOrderSingle extends NewOrderSingle {
+public class CreateMarketOrderRequest extends CreateOrderRequest {
+
     private BigDecimal size; //optional: Desired amount in BTC
 
-    public NewMarketOrderSingle(){
+    public CreateMarketOrderRequest(){
         setType("market");
     }
 

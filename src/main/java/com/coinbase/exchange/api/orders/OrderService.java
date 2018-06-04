@@ -2,8 +2,9 @@ package com.coinbase.exchange.api.orders;
 
 import com.coinbase.exchange.api.entity.Fill;
 import com.coinbase.exchange.api.entity.Hold;
-import com.coinbase.exchange.api.entity.NewOrderSingle;
+import com.coinbase.exchange.api.orders.domain.CreateOrderRequest;
 import com.coinbase.exchange.api.exchange.GdaxHttpClient;
+import com.coinbase.exchange.api.orders.domain.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class OrderService {
         });
     }
 
-    public Order createOrder(final NewOrderSingle order) {
+    public Order createOrder(final CreateOrderRequest order) {
         return httpClient.post(ORDERS_ENDPOINT, new ParameterizedTypeReference<Order>() {
         }, order);
     }

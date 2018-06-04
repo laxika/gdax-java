@@ -4,10 +4,11 @@ import com.coinbase.exchange.api.BaseTest;
 import com.coinbase.exchange.api.accounts.domain.Account;
 import com.coinbase.exchange.api.accounts.AccountService;
 import com.coinbase.exchange.api.entity.Fill;
-import com.coinbase.exchange.api.entity.NewLimitOrderSingle;
-import com.coinbase.exchange.api.entity.NewMarketOrderSingle;
+import com.coinbase.exchange.api.orders.domain.CreateLimitOrderRequest;
+import com.coinbase.exchange.api.orders.domain.CreateMarketOrderRequest;
 import com.coinbase.exchange.api.marketdata.domain.MarketData;
 import com.coinbase.exchange.api.marketdata.MarketDataService;
+import com.coinbase.exchange.api.orders.domain.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -56,14 +57,14 @@ public class OrderTests extends BaseTest {
         final BigDecimal price = getAskPrice(marketData).setScale(8, BigDecimal.ROUND_HALF_UP);
         final BigDecimal size = new BigDecimal("0.01").setScale(8, BigDecimal.ROUND_HALF_UP);
 
-        final NewLimitOrderSingle limitOrder = getNewLimitOrderSingle(productId, price, size);
+        final CreateLimitOrderRequest limitOrder = getNewLimitOrderSingle(productId, price, size);
 
         final Order order = orderService.createOrder(limitOrder);
 
         assertNotNull(order);
-        assertEquals(productId, order.getProduct_id());
-        assertEquals(size, new BigDecimal(order.getSize()).setScale(8, BigDecimal.ROUND_HALF_UP));
-        assertEquals(price, new BigDecimal(order.getPrice()).setScale(8, BigDecimal.ROUND_HALF_UP));
+        assertEquals(productId, order.getProductId());
+        assertEquals(size, order.getSize());
+        assertEquals(price, order.getPrice());
         assertEquals("limit", order.getType());
 
         orderService.cancelOrder(order.getId());
@@ -92,36 +93,36 @@ public class OrderTests extends BaseTest {
 
     @Test
     public void createMarketOrderBuy() {
-        NewMarketOrderSingle marketOrder = createNewMarketOrder("BTC-USD", "buy", new BigDecimal(0.01));
+        CreateMarketOrderRequest marketOrder = createNewMarketOrder("BTC-USD", "buy", new BigDecimal(0.01));
         Order order = orderService.createOrder(marketOrder);
 
-        assertTrue(order != null); //make sure we created an order
+        assertNotNull(order); //make sure we created an order
         String orderId = order.getId();
         assertTrue(orderId.length() > 0); //ensure we have an actual orderId
         Order filledOrder = orderService.getOrder(orderId);
-        assertTrue(filledOrder != null); //ensure our order hit the system
-        assertTrue(new BigDecimal(filledOrder.getSize()).compareTo(BigDecimal.ZERO) > 0); //ensure we got a fill
-        log.info("Order opened and filled: " + filledOrder.getSize() + " @ " + filledOrder.getExecuted_value()
-                + " at the cost of " + filledOrder.getFill_fees());
+        assertNotNull(filledOrder); //ensure our order hit the system
+        assertTrue(filledOrder.getSize().compareTo(BigDecimal.ZERO) > 0); //ensure we got a fill
+        log.info("Order opened and filled: " + filledOrder.getSize() + " @ " + filledOrder.getExecutedValue()
+                + " at the cost of " + filledOrder.getFillFees());
     }
 
     @Test
     public void createMarketOrderSell() {
-        NewMarketOrderSingle marketOrder = createNewMarketOrder("BTC-USD", "sell", new BigDecimal(0.01));
+        CreateMarketOrderRequest marketOrder = createNewMarketOrder("BTC-USD", "sell", new BigDecimal(0.01));
         Order order = orderService.createOrder(marketOrder);
-        assertTrue(order != null); //make sure we created an order
+        assertNotNull(order); //make sure we created an order
         String orderId = order.getId();
         assertTrue(orderId.length() > 0); //ensure we have an actual orderId
         Order filledOrder = orderService.getOrder(orderId);
-        assertTrue(filledOrder != null); //ensure our order hit the system
-        assertTrue(new BigDecimal(filledOrder.getSize()).compareTo(BigDecimal.ZERO) > 0); //ensure we got a fill
-        log.info("Order opened and filled: " + filledOrder.getSize() + " @ " + filledOrder.getExecuted_value()
-                + " at the cost of " + filledOrder.getFill_fees());
+        assertNotNull(filledOrder); //ensure our order hit the system
+        assertTrue(filledOrder.getSize().compareTo(BigDecimal.ZERO) > 0); //ensure we got a fill
+        log.info("Order opened and filled: " + filledOrder.getSize() + " @ " + filledOrder.getExecutedValue()
+                + " at the cost of " + filledOrder.getFillFees());
     }
 
-    private NewMarketOrderSingle createNewMarketOrder(String product, String action, BigDecimal size) {
-        NewMarketOrderSingle marketOrder = new NewMarketOrderSingle();
-        marketOrder.setProduct_id(product);
+    private CreateMarketOrderRequest createNewMarketOrder(String product, String action, BigDecimal size) {
+        CreateMarketOrderRequest marketOrder = new CreateMarketOrderRequest();
+        marketOrder.setProductId(product);
         marketOrder.setSide(action);
         marketOrder.setSize(size);
         return marketOrder;
@@ -131,9 +132,9 @@ public class OrderTests extends BaseTest {
         return marketDataService.getMarketDataOrderBook(product, "1");
     }
 
-    private NewLimitOrderSingle getNewLimitOrderSingle(String productId, BigDecimal price, BigDecimal size) {
-        NewLimitOrderSingle limitOrder = new NewLimitOrderSingle();
-        limitOrder.setProduct_id(productId);
+    private CreateLimitOrderRequest getNewLimitOrderSingle(String productId, BigDecimal price, BigDecimal size) {
+        CreateLimitOrderRequest limitOrder = new CreateLimitOrderRequest();
+        limitOrder.setProductId(productId);
         if (productId.contains("-BTC")) {
             limitOrder.setSide("sell");
         } else {
